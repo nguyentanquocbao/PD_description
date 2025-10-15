@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Hướng Dẫn Phân L Xác Suất Vỡ Nợ (PD)</title>
+<script src="H%C6%B0%E1%BB%9Bng%20D%E1%BA%ABn%20Ph%C3%A2n%20L%20X%C3%A1c%20Su%E1%BA%A5t%20V%E1%BB%A1%20N%E1%BB%A3%20(PD)_files/chart.js"></script>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .pd-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .pd-type-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .pd-type-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pd-type-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .stress-pd-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            height: 600px;
+        }
+
+        .stress-sidebar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .stress-nav-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .stress-nav-item:hover {
+            background: #e9ecef;
+            border-left-color: #667eea;
+        }
+
+        .stress-nav-item.active {
+            background: #667eea;
+            color: white;
+            border-left-color: #2c3e50;
+        }
+
+        .stress-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .stress-content-item {
+            display: none;
+        }
+
+        .stress-content-item.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .formula-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8e6cf 0%, #dcedc8 100%);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .timeline {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .timeline-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .pd-detail {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #007bff;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 768px) {
+            .stress-pd-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .pd-types-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🍨 Hướng Dẫn Phân Loại Xác Suất Vỡ Nợ (PD)</h1>
+<p>Hướng dẫn tính toán PD trong quản lý rủi ro tín dụng</p>
+</div>
+<div class="nav-tabs">
+<button class="nav-tab active" onclick="showSection('overview')">📊 Tổng Quan</button>
+<button class="nav-tab" onclick="showSection('pd-types')">📋 Các Loại PD</button>
+<button class="nav-tab" onclick="showSection('modeling')">🧮 Mô Hình Hóa</button>
+<button class="nav-tab" onclick="showSection('stress-pd')">⚡ Stressed-PD vs Down-turn PD </button>
+<button class="nav-tab" onclick="showSection('implementation')">⚙️ Triển Khai</button>
+</div>
+<!-- Overview Section -->
+<div class="content-section active" id="overview">
+<h2 class="section-title">🎯 Tổng Quan về Xác Suất Vỡ Nợ (PD)</h2>
+
+<!-- Concise PD Definition -->
+<div class="alert" style="background-color: #e7f3ff; border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 8px;">
+    <h3 style="color: #2c3e50; margin-bottom: 10px;">📋 Xác Suất Vỡ Nợ (PD) là gì?</h3>
+    <p style="font-size: 1.1em; margin-bottom: 15px;"><strong>PD là khả năng ước tính rằng một người vay sẽ không thể thực hiện các nghĩa vụ nợ của họ trong một khoảng thời gian xác định.</strong></p>
+    <div class="formula-box" style="margin: 15px 0;">
+        <strong>Định nghĩa đơn giản:</strong> PD = P(Sự kiện vỡ nợ | Thông tin hiện tại &amp; Thời gian dự báo)
+    </div>
+</div>
+
+<!-- Key Distinctions: PD vs Bad Rate vs ODR -->
+<h3 style="color: #2c3e50; margin: 30px 0 20px 0;">🔍 Phân Biệt Chính: PD vs Tỷ Lệ Nợ Xấu vs ODR</h3>
+
+<!-- Time Classification Alert -->
+<div class="alert" style="background-color: #fff3cd; border-left: 4px solid #f39c12; padding: 20px; margin: 20px 0; border-radius: 8px;">
+    <h4 style="color: #856404; margin-bottom: 15px;">⏰ Phân Loại Theo Thời Gian (Time Classification)</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <h5 style="color: #667eea; margin-bottom: 10px;">📍 Dữ Liệu Tại Thời Điểm (Point-in-Time Data)</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li><strong>Xác Suất Vỡ Nợ (PD):</strong> Ước tính tại một thời điểm cụ thể</li>
+                <li><strong>Bad Rate/NPL Rate:</strong> Tính toán tại thời điểm báo cáo</li>
+            </ul>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px; font-style: italic;">➡️ Đặc điểm: Giá trị đơn lẻ tại một mốc thời gian nhất định</p>
+        </div>
+        <div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
+            <h5 style="color: #f39c12; margin-bottom: 10px;">📈 Dữ Liệu Theo Kỳ (Period Data)</h5>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li><strong>Tỷ Lệ Vỡ Nợ Quan Sát Thực Tế (ODR/Long-Run Default Rate):</strong> Đo lường trong một khoảng thời gian</li>
+            </ul>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px; font-style: italic;">➡️ Đặc điểm: Tích lũy qua một chu kỳ thời gian (tháng, quý, năm)</p>
+        </div>
+    </div>
+</div>
+
+<div class="pd-types-grid" style="display: flex; flex-wrap: nowrap; gap: 20px; overflow-x: auto;">
+    <div class="pd-type-card" style="border-left-color: #667eea; flex: 1; min-width: 300px;">
+        <div class="pd-type-title">
+            <div class="pd-type-icon" style="background: #667eea;">PD</div>
+            Xác Suất Vỡ Nợ
+        </div>
+        <p><strong>Ước tính hướng tới tương lai</strong> về khả năng vỡ nợ</p>
+        <ul>
+            <li>🔮 <strong>Bản chất:</strong> Dự báo/Hướng tới tương lai</li>
+            <li>📊 <strong>Cơ sở:</strong> Mô hình thống kê &amp; yếu tố rủi ro</li>
+            <li>⏰ <strong>Thời gian:</strong> Định hướng tương lai (thường là 12 tháng)</li>
+            <li>📍 <strong>Kiểu dữ liệu:</strong> Tại thời điểm (Point-in-Time)</li>
+            <li>🎯 <strong>Mục đích:</strong> Đánh giá rủi ro &amp; định giá</li>
+        </ul>
+        <div class="formula-box">
+            PD = Kết quả mô hình dựa trên đặc điểm người vay
+        </div>
+    </div>
+    
+    <div class="pd-type-card" style="border-left-color: #e74c3c; flex: 1; min-width: 300px;">
+        <div class="pd-type-title">
+            <div class="pd-type-icon" style="background: #e74c3c;">BR</div>
+            Bad Rate / NPL Rate
+        </div>
+        <p><strong>Tỷ lệ vỡ nợ/NPL lịch sử</strong> trong một phân khúc danh mục cụ thể</p>
+        <ul>
+            <li>📈 <strong>Bản chất:</strong> Lịch sử/Hồi cứu</li>
+            <li>📊 <strong>Cơ sở:</strong> Vỡ nợ thực tế hoặc phân loại NPL</li>
+            <li>⏰ <strong>Thời gian:</strong> Dữ liệu hiệu suất quá khứ</li>
+            <li>📍 <strong>Kiểu dữ liệu:</strong> Tại thời điểm (Point-in-Time)</li>
+            <li>🎯 <strong>Mục đích:</strong> Hiệu chỉnh &amp; xác thực mô hình</li>
+        </ul>
+        <div class="formula-box">
+            Tỷ Lệ Nợ Xấu = Số Vỡ Nợ / Tổng Tài Khoản<br>
+            Tỷ Lệ NPL = Số Tiền NPL / Tổng Dư Nợ
+        </div>
+    </div>
+    
+    <div class="pd-type-card" style="border-left-color: #f39c12; flex: 1; min-width: 300px;">
+        <div class="pd-type-title">
+            <div class="pd-type-icon" style="background: #f39c12;">ODR</div>
+            Tỷ Lệ Vỡ Nợ Quan Sát Thực Tế (ODR/Long-Run Default Rate)
+        </div>
+        <p><strong>Tỷ lệ vỡ nợ thực tế</strong> quan sát được trong một khoảng thời gian cụ thể</p>
+        <ul>
+            <li>📊 <strong>Bản chất:</strong> Thực nghiệm/Thực tế</li>
+            <li>📈 <strong>Cơ sở:</strong> Quan sát vỡ nợ thời gian thực</li>
+            <li>⏰ <strong>Thời gian:</strong> Đo lường kỳ hiện tại</li>
+            <li>📍 <strong>Kiểu dữ liệu:</strong> Theo kỳ (Period Data - tháng/quý/năm)</li>
+            <li>🎯 <strong>Mục đích:</strong> Giám sát hiệu suất &amp; so sánh chuẩn</li>
+        </ul>
+        <div class="formula-box">
+            ODR = Vỡ Nợ Thực Tế / Quy Mô Danh Mục (kỳ hiện tại)
+        </div>
+    </div>
+</div>
+
+
+<!-- Interactive Comparison Chart -->
+<div class="chart-container">
+<canvas id="overviewChart" style="display: block; box-sizing: border-box; height: 300px; width: 1300px;" width="1300" height="300"></canvas>
+</div>
+
+<!-- Key Applications -->
+<h3 style="color: #2c3e50; margin: 30px 0 20px 0;">🎯 Ứng Dụng Chính của PD</h3>
+<div class="metric-grid">
+    <div class="metric-card" style="background: linear-gradient(135deg, #667eea 0%, #c3aed8 100%); color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+        <div class="metric-value">💡</div>
+        <div class="metric-label" style="font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Ra Quyết Định Tín Dụng</div>
+    </div>
+    <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #c76774 100%); color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+        <div class="metric-value">💰</div>
+        <div class="metric-label" style="font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Giá Cả Dựa Trên Rủi Ro</div>
+    </div>
+    <div class="metric-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+        <div class="metric-value">📊</div>
+        <div class="metric-label" style="font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Phân Bổ Vốn</div>
+    </div>
+    <div class="metric-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+        <div class="metric-value">🏛️</div>
+        <div class="metric-label" style="font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Tuân Thủ Quy Định</div>
+    </div>
+</div>
+</div>
+<!-- PD Types Section -->
+<div class="content-section" id="pd-types">
+<h2 class="section-title">📋 Các Loại Xác Suất Vỡ Nợ</h2>
+<div class="pd-types-grid">
+
+<!-- PIT vs TTC PD Combined -->
+<div class="pd-type-card">
+<div class="pd-type-title">
+<div class="pd-type-icon" style="background: #e74c3c;">1</div>
+                        PD Point-in-Time vs PD Throught-The-Cycle
+                    </div>
+<div class="chart-container">
+<canvas id="ttcChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="formula-box">
+                        PIT PD = f(Điều Kiện Kinh Tế Hiện Tại)
+                    </div>
+<div class="formula-box">
+                        TTC PD = Trung Bình Qua Chu Kỳ Kinh Tế
+                    </div>
+<div style="display: flex; gap: 20px; margin-top: 15px;">
+    <div style="flex: 1;">
+        <h4 style="color: #e74c3c;">🔴 Point in Time (PD Thời điểm)</h4>
+        <ul>
+            <li>Phản ánh chu kỳ kinh tế hiện tại</li>
+            <li>Biến động và nhạy cảm hơn</li>
+            <li>Sử dụng cho đánh giá rủi ro hiện tại</li>
+            <li>Cao hơn trong thời kỳ suy thoái kinh tế</li>
+        </ul>
+    </div>
+    <div style="flex: 1;">
+        <h4 style="color: #3498db;">🔵 Throught The Cycle (Xuyên Chu Kỳ)</h4>
+        <ul>
+            <li>Được làm mượt qua các chu kỳ kinh tế</li>
+            <li>Ổn định hơn theo thời gian</li>
+            <li>Sử dụng cho kế hoạch vốn</li>
+            <li>Cơ quan quản lý ưu tiên cho một số ứng dụng</li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<!-- Lifetime vs Marginal PD Combined -->
+<div class="pd-type-card">
+<div class="pd-type-title">
+<div class="pd-type-icon" style="background: #f39c12;">2</div>
+                        PD Lifetime (trọn đời) vs PD Marginal
+                    </div>
+<div class="chart-container">
+<canvas id="lifetimeMarginalChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="formula-box">
+                        PD Biên<sub>t</sub> = PD trong năm t | Tồn tại đến t-1
+                    </div>
+<div class="formula-box">
+                        PD Lifetime (trọn đời) = 1 - ∏(1 - PD Biên<sub>t</sub>)
+                    </div>
+<div style="display: flex; gap: 20px; margin-top: 15px;">
+    <div style="flex: 1;">
+        <h4 style="color: #f39c12;">🟡 PD Lifetime (trọn đời)</h4>
+        <ul>
+            <li>Xác suất tích lũy trong suốt vòng đời tài sản</li>
+            <li>Bắt buộc cho tính toán ECL theo IFRS 9</li>
+            <li>Xem xét di chuyển tín dụng</li>
+            <li>Cao hơn đối với các khoản phơi bày dài hạn</li>
+        </ul>
+    </div>
+    <div style="flex: 1;">
+        <h4 style="color: #9b59b6;">🟣 PD Marginal</h4>
+        <ul>
+            <li>Xác suất vỡ nợ theo từng kỳ cụ thể</li>
+            <li>Có điều kiện về sự tồn tại</li>
+            <li>Khối xây dựng cho PD Lifetime (trọn đời)</li>
+            <li>Hữu ích cho phân tích cấu trúc kỳ hạn</li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<!-- Hybrid PD -->
+<div class="pd-type-card">
+<div class="pd-type-title">
+<div class="pd-type-icon" style="background: #27ae60;">3</div>
+                        PD Hybrid
+                    </div>
+<div class="chart-container">
+<canvas id="hybridChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="formula-box">
+                        PD Hybrid = α × PIT PD + (1-α) × TTC PD
+                    </div>
+<p><strong>Đặc điểm:</strong></p>
+<ul>
+<li>Kết hợp phương pháp PIT và TTC</li>
+<li>Cân bằng điều kiện hiện tại với sự ổn định dài hạn</li>
+<li>Trọng số (α) có thể điều chỉnh dựa trên ứng dụng</li>
+<li>Sử dụng trong các mô hình hướng tới tương lai của IFRS 9</li>
+<li>Cung cấp tính linh hoạt cho các chân trời rủi ro khác nhau</li>
+</ul>
+</div>
+
+<!-- Cumulative PD -->
+<div class="pd-type-card">
+<div class="pd-type-title">
+<div class="pd-type-icon" style="background: #8e44ad;">4</div>
+                        PD Cummulative (tích luỹ)
+                    </div>
+<div class="chart-container">
+<canvas id="cumulativeChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="formula-box">
+                        PD Cummulative<sub>T</sub> = 1 - ∏<sub>t=1</sub><sup>T</sup>(1 - PD<sub>t</sub>)
+                    </div>
+<p><strong>Đặc điểm:</strong></p>
+<ul>
+<li>Xác suất vỡ nợ tại thời điểm T</li>
+<li>Tăng đơn điệu theo thời gian</li>
+<li>Sử dụng cho đánh giá rủi ro đa kỳ</li>
+<li>Đầu vào chính cho tính toán ECL theo IFRS 9</li>
+<li>Thiết yếu cho quản lý rủi ro danh mục</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<!-- Modeling Techniques Section -->
+<div id="modeling" class="content-section">
+    <h2 class="section-title">🧮 Kỹ Thuật Mô Hình Hóa PD</h2>
+
+    <div class="timeline">
+        <div class="timeline-item" onclick="toggleDetail('statistical-models')">
+            <h3>📊 Mô Hình Thống Kê</h3>
+            <p>Các phương pháp kinh tế lượng truyền thống cho ước tính PD</p>
+        </div>
+        <div id="statistical-models" class="pd-detail">
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>Hồi Quy Logistic</h4>
+                    <div class="formula-box">
+                        PD = exp(β₀ + β₁X₁ + ... + βₙXₙ) / (1 + exp(β₀ + β₁X₁ + ... + βₙXₙ))
+                    </div>
+                    <ul>
+                        <li>Mô hình PD phổ biến nhất</li>
+                        <li>Hệ số có thể giải thích được</li>
+                        <li>Được cơ quan quản lý chấp thuận</li>
+                        <li>Giả định mối quan hệ tuyến tính</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4>Phân Tích Sự Sống Sót</h4>
+                    <div class="formula-box">
+                        h(t) = h₀(t) × exp(β₁X₁ + ... + βₙXₙ)
+                    </div>
+                    <ul>
+                        <li>Cox Proportional Hazards</li>
+                        <li>Mô hình hóa thời gian đến sự kiện</li>
+                        <li>Xử lý dữ liệu bị cắt ngắn</li>
+                        <li>Ước tính PD biên</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" onclick="toggleDetail('structural-models')">
+            <h3>🏗️ Structural Models</h3>
+            <p>Asset-value based theoretical approaches</p>
+        </div>
+        <div id="structural-models" class="pd-detail">
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>Mô Hình Merton</h4>
+                    <div class="formula-box">
+                        PD = N(-d₂) where d₂ = (ln(V/D) + (r - σ²/2)T) / (σ√T)
+                    </div>
+                    <ul>
+                        <li>Khung Black-Scholes</li>
+                        <li>Khái niệm khoảng cách đến vỡ nợ</li>
+                        <li>Đầu vào dựa trên thị trường</li>
+                        <li>Nền tảng lý thuyết</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4>Mô Hình KMV</h4>
+                    <div class="formula-box">
+                        Expected Default Frequency = f(Distance to Default)
+                    </div>
+                    <ul>
+                        <li>Phương pháp của Moody's Analytics</li>
+                        <li>Cơ sở dữ liệu vỡ nợ thực nghiệm</li>
+                        <li>PD dựa trên thị trường</li>
+                        <li>Cập nhật thời gian thực</li>                   </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-item" onclick="toggleDetail('ml-models')">
+            <h3>🤖 Mô Hình Học Máy</h3>
+            <p>Các kỹ thuật AI/ML tiên tiến cho dự báo PD</p>
+        </div>
+        <div id="ml-models" class="pd-detail">
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>Random Forest</h4>
+                    <ul>
+                        <li>Tập hợp các cây quyết định</li>
+                        <li>Xử lý mối quan hệ phi tuyến</li>
+                        <li>Xếp hạng tầm quan trọng đặc trưng</li>
+                        <li>Bền vững với các giá trị ngoại lai</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4>Neural Network</h4>
+                    <ul>
+                        <li>Kiến trúc học sâu</li>
+                        <li>Nhận dạng mẫu phức tạp</li>
+                        <li>Khả năng dự báo cao</li>
+                        <li>Tính giải thích hộp đen</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4>Gradient Boosting</h4>
+                    <ul>
+                        <li>XGBoost, LightGBM</li>
+                        <li>Học tuần tự</li>
+                        <li>Độ chính xác cao</li>
+                        <li>Nắm bắt tương tác đặc trưng</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4>Máy Vector Hỗ Trợ</h4>
+                    <ul>
+                        <li>Phân loại dựa trên kernel</li>
+                        <li>Dữ liệu đa chiều</li>
+                        <li>Tối đa hóa biên</li>
+                        <li>Biên giới phi tuyến</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stress PD & Downturn PD Section -->
+<div class="content-section" id="stress-pd">
+<h2 class="section-title">⚡ Stressed-PD (Căng Thẳng) &amp; Down-Turn PD (Suy Thoái)</h2>
+
+<!-- Key Differences Overview -->
+<div class="pd-types-grid" style="margin-bottom: 30px;">
+    <div class="pd-type-card" style="border-left-color: #e74c3c;">
+        <div class="pd-type-title">
+            <div class="pd-type-icon" style="background: #e74c3c;">⚠️</div>
+            Stressed-PD
+        </div>
+        <p><strong>Mục đích:</strong> Phân tích kịch bản hướng tới tương lai cho đầy đủ vốn và quản lý rủi ro</p>
+        <ul>
+            <li>🎯 <strong>Tập trung:</strong> Các kịch bản giả định tương lai</li>
+            <li>📊 <strong>Ứng dụng:</strong> Kiểm tra căng thẳng CCAR, EBA</li>
+            <li>⏱️ <strong>Chân trời thời gian:</strong> Dự báo đa năm</li>
+            <li>Ổ <strong>Tần suất:</strong> Chu kỳ quản lý hàng năm</li>
+        </ul>
+        <div class="formula-box">
+            Stressed-PD = f(PD Cơ Bản, Biến Vĩ Mô Căng Thẳng, Mức Độ Nghiêm Trọng Kịch Bản)
+        </div>
+    </div>
+    
+    <div class="pd-type-card" style="border-left-color: #f39c12;">
+        <div class="pd-type-title">
+            <div class="pd-type-icon" style="background: #f39c12;">📉</div>
+            Down-Turn PD
+        </div>
+        <p><strong>Mục đích:</strong> Hiệu chỉnh trường hợp xấu nhất lịch sử cho yêu cầu vốn (phương pháp IRB)</p>
+        <ul>
+            <li>🎯 <strong>Tập trung:</strong> Điều kiện nghiêm trọng lịch sử</li>
+            <li>📊 <strong>Ứng dụng:</strong> Tính toán vốn IRB Basel</li>
+            <li>⏱️ <strong>Chân trời thời gian:</strong> Xác suất vỡ nợ một năm</li>
+            <li>🔄 <strong>Tần suất:</strong> Xác thực mô hình hàng năm</li>
+        </ul>
+        <div class="formula-box">
+            Down-Turn PD = TTC PD × Hệ Số Nhân Suy Thoái (từ đỉnh lịch sử)
+        </div>
+    </div>
+</div>
+<div class="stress-pd-container">
+<div class="stress-sidebar">
+<div class="stress-nav-item active" onclick="showStressContent('comparison')">
+                        🔍 Sự Khác Biệt Chính
+                    </div>
+<div class="stress-nav-item" onclick="showStressContent('stress-methodology')">
+                        ⚠️ Phương Pháp Stressed-PD
+                    </div>
+<div class="stress-nav-item" onclick="showStressContent('downturn-methodology')">
+                        📉 Phương Pháp Down-Turn PD
+                    </div>
+<div class="stress-nav-item" onclick="showStressContent('scenarios')">
+                        🎭 Kịch Bản Căng Thẳng
+                    </div>
+<div class="stress-nav-item" onclick="showStressContent('implementation')">
+                        ⚙️ Triển Khai
+                    </div>
+<div class="stress-nav-item" onclick="showStressContent('validation')">
+                        ✅ Xác Thực
+                    </div>
+</div>
+<div class="stress-content">
+<!-- Key Differences Comparison -->
+<div class="stress-content-item active" id="stress-comparison">
+<h3>🔍 Stressed-PD vs Down-Turn PD: Sự Khác Biệt Chính</h3>
+<div class="chart-container">
+<canvas id="comparisonChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+
+<table class="comparison-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+    <thead>
+        <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <th style="padding: 12px; text-align: left;">Khía Cạnh</th>
+            <th style="padding: 12px; text-align: left;">Stressed-PD</th>
+            <th style="padding: 12px; text-align: left;">Down-Turn PD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px;"><strong>🎯 Mục Đích Chính</strong></td>
+            <td style="padding: 12px;">Phân tích kịch bản hướng tới tương lai</td>
+            <td style="padding: 12px;">Hiệu chỉnh trường hợp xấu nhất lịch sử</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd; background-color: #f5f5f5;">
+            <td style="padding: 12px;"><strong>📊 Nguồn Dữ Liệu</strong></td>
+            <td style="padding: 12px;">Kịch bản giả định</td>
+            <td style="padding: 12px;">Quan sát lịch sử</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px;"><strong>⏱️ Chân Trời Thời Gian</strong></td>
+            <td style="padding: 12px;">Đa năm (thường 3-5 năm)</td>
+            <td style="padding: 12px;">Xác suất một năm</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd; background-color: #f5f5f5;">
+            <td style="padding: 12px;"><strong>🎭 Mức Độ Nghiêm Trọng</strong></td>
+            <td style="padding: 12px;">Biến đổi (từ cơ bản đến bất lợi nghiêm trọng)</td>
+            <td style="padding: 12px;">Điều kiện nghiêm trọng nhất lịch sử</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px;"><strong>🏛️ Regulatory Use</strong></td>
+            <td style="padding: 12px;">CCAR, EBA stress tests, ICAAP</td>
+            <td style="padding: 12px;">Basel IRB capital requirements</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd; background-color: #f5f5f5;">
+            <td style="padding: 12px;"><strong>🔄 Tần Suất Cập Nhật</strong></td>
+            <td style="padding: 12px;">Hàng năm/Nửa năm</td>
+            <td style="padding: 12px;">Hàng năm (với xác thực mô hình)</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="metric-grid">
+    <div class="metric-card" style="border: 2px solid #e74c3c;">
+        <div class="metric-value" style="color: #e74c3c;">2-4x</div>
+        <div class="metric-label">Tăng Stressed-PD Thông Thường</div>
+    </div>
+    <div class="metric-card" style="border: 2px solid #f39c12;">
+        <div class="metric-value" style="color: #f39c12;">1.5-3x</div>
+        <div class="metric-label">Hệ Số Nhân Down-Turn PD Thông Thường</div>
+    </div>
+    <div class="metric-card" style="border: 2px solid #27ae60;">
+        <div class="metric-value" style="color: #27ae60;">20+</div>
+        <div class="metric-label">Số Năm Dữ Liệu Lịch Sử Yêu Cầu</div>
+    </div>
+</div>
+</div>
+
+<!-- Stress PD Methodology -->
+<div class="stress-content-item" id="stress-stress-methodology">
+<h3>⚠️ Phương Pháp Luận Stressed-PD</h3>
+<div class="chart-container">
+<canvas id="stressMethodologyChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+
+<div class="alert" style="background-color: #fff3cd; border-color: #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin: 15px 0;">
+    <strong>⚠️ Khái Niệm Chính:</strong> Kiểm tra Stressed-PD đánh giá 
+cách xác suất vỡ nợ phản ứng với các kịch bản bất lợi giả định, giúp 
+ngân hàng đánh giá khả năng phục hồi danh mục dưới các điều kiện kinh tế
+ khác nhau.
+</div>
+
+<div class="formula-box">
+<strong>Công Thức Stressed-PD:</strong><br>
+                            Stressed-PD = PD Cơ Bản × Hệ Số Căng Thẳng<br>
+                            Hệ Số Căng Thẳng = f(Tăng Trưởng GDP, Tỷ Lệ Thất Nghiệp, Lãi Suất, Giá Tài Sản)
+                        </div>
+<div class="metric-grid">
+<div class="metric-card">
+<div class="metric-value">3-5</div>
+<div class="metric-label">Năm Kỳ Căng Thẳng</div>
+</div>
+<div class="metric-card">
+<div class="metric-value">2-4x</div>
+<div class="metric-label">Tăng PD Thông Thường</div>
+</div>
+</div>
+<h4>Các Thành Phần Chính:</h4>
+<ul>
+<li><strong>Biến Vĩ Mô Kinh Tế:</strong> GDP, thất nghiệp, lãi suất</li>
+<li><strong>Yếu Tố Theo Ngành:</strong> Các chỉ số hiệu suất ngành</li>
+<li><strong>Mối Quan Hệ Lịch Sử:</strong> Độ nhạy của PD với các yếu tố kinh tế</li>
+<li><strong>Điều Chỉnh Hướng Tương Lai:</strong> Lớp phủ quản lý và đánh giá chuyên gia</li>
+</ul>
+</div>
+<!-- Downturn PD Methodology -->
+<div class="stress-content-item" id="stress-downturn-methodology">
+<h3>📉 Phương Pháp Luận Down-Turn PD</h3>
+<div class="chart-container">
+<canvas id="downturnMethodologyChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+
+<div class="alert" style="background-color: #fff3cd; border-color: #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin: 15px 0;">
+    <strong>📉 Khái Niệm Chính:</strong> Down-Turn PD nắm bắt xác suất 
+vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướng tăng của PD
+ trong các giai đoạn căng thẳng kinh tế dựa trên quan sát lịch sử.
+</div>
+
+<div class="formula-box">
+<strong>Ước Tính Down-Turn PD:</strong><br>
+                            Down-Turn PD = TTC PD × Hệ Số Nhân Suy Thoái<br>
+                            trong đó Hệ Số Nhân Suy Thoái = f(Chỉ Số Căng Thẳng Kinh Tế)
+                        </div>
+
+<h4>📊 Phương Pháp Ước Tính:</h4>
+<div class="model-grid">
+    <div class="model-card">
+        <h4>📈 Phương Pháp Đỉnh Lịch Sử</h4>
+        <ul>
+            <li>Xác định các giai đoạn căng thẳng lịch sử</li>
+            <li>Tính toán PD trong các giai đoạn này</li>
+            <li>Áp dụng tỷ lệ vỡ nợ đỉnh</li>
+            <li>Đơn giản và minh bạch</li>
+        </ul>
+        <div class="formula-box">
+            Down-Turn PD = max(Quan sát PD lịch sử)
+        </div>
+    </div>
+    
+    <div class="model-card">
+        <h4>📊 Phương Pháp Dựa Trên Hồi Quy</h4>
+        <ul>
+            <li>Mô hình PD so với biến kinh tế</li>
+            <li>Ước tính hệ số</li>
+            <li>Áp dụng kịch bản căng thẳng</li>
+            <li>Khả năng hướng tới tương lai</li>
+        </ul>
+        <div class="formula-box">
+            PD(t) = α + β₁×GDP(t) + β₂×Thất_nghiệp(t) + ε
+        </div>
+    </div>
+    
+    <div class="model-card">
+        <h4>🎲 Phương Pháp Monte Carlo</h4>
+        <ul>
+            <li>Mô phỏng các kịch bản kinh tế</li>
+            <li>Tạo phân phối PD</li>
+            <li>Trích xuất phần trăm đuôi</li>
+            <li>Đánh giá rủi ro toàn diện</li>
+        </ul>
+        <div class="formula-box">
+            Down-Turn PD = Phần_trăm(PD Mô phỏng, 95%)
+        </div>
+    </div>
+    
+    <div class="model-card">
+        <h4>📋 Phương Pháp Lớp Phủ Chuyên Gia</h4>
+        <ul>
+            <li>Tích hợp đánh giá chuyên gia</li>
+            <li>Điều chỉnh định tính</li>
+            <li>Thông tin hướng tới tương lai</li>
+            <li>Yêu cầu khung quản trị</li>
+        </ul>
+        <div class="formula-box">
+            Down-Turn PD Cuối Cùng = PD Mô Hình × Điều Chỉnh Chuyên Gia
+        </div>
+    </div>
+</div>
+
+<div class="metric-grid">
+    <div class="metric-card">
+        <div class="metric-value">12</div>
+        <div class="metric-label">Thời Lượng Tối Thiểu (Tháng)</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">20+</div>
+        <div class="metric-label">Năm Dữ Liệu Lịch Sử</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">95th</div>
+        <div class="metric-label">Phần Trăm Thường Sử Dụng</div>
+    </div>
+</div>
+</div>
+
+<!-- Stress Scenarios -->
+<div class="stress-content-item" id="stress-scenarios">
+<h3>🎭 Kịch Bản Căng Thẳng</h3>
+<div class="chart-container">
+<canvas id="stressScenariosChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="metric-grid">
+<div class="metric-card">
+<div class="metric-value">Cơ Bản</div>
+<div class="metric-label">Điều Kiện Kỳ Vọng</div>
+</div>
+<div class="metric-card">
+<div class="metric-value">Bất Lợi</div>
+<div class="metric-label">Căng Thẳng Vừa</div>
+</div>
+<div class="metric-card">
+<div class="metric-value">Bất Lợi Nghiêm Trọng</div>
+<div class="metric-label">Căng Thẳng Cực Đoạn</div>
+</div>
+</div>
+<h4>Định Nghĩa Kịch Bản:</h4>
+<ul>
+<li><strong>Kịch Bản Cơ Bản:</strong> Điều kiện vĩ mô kinh tế kỳ vọng</li>
+<li><strong>Kịch Bản Bất Lợi:</strong> Suy thoái kinh tế vừa (sự kiện 1-trong-5 đến 1-trong-10 năm)</li>
+<li><strong>Bất Lợi Nghiêm Trọng:</strong> Suy thoái nghiêm trọng (sự kiện 1-trong-20 đến 1-trong-100 năm)</li>
+</ul>
+<div class="formula-box">
+<strong>Áp Dụng Kịch Bản:</strong><br>
+                            PD<sub>kịch_bản</sub> = PD<sub>cơ_bản</sub> × (1 + β × ΔBiến Vĩ Mô)
+                        </div>
+</div>
+<!-- Implementation -->
+<div class="stress-content-item" id="stress-implementation">
+<h3>⚙️ Khung Triển Khai</h3>
+<div class="chart-container">
+<canvas id="implementationChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<h4>Các Bước Triển Khai:</h4>
+<ol>
+<li><strong>Phát Triển Mô Hình:</strong>
+<ul>
+<li>Xác định các yếu tố rủi ro chính</li>
+<li>Thiết lập mối quan hệ vĩ mô-PD</li>
+<li>Hiệu chỉnh tham số độ nhạy</li>
+</ul>
+</li>
+<li><strong>Thiết Kế Kịch Bản:</strong>
+<ul>
+<li>Định nghĩa kịch bản căng thẳng</li>
+<li>Thiết lập đường đi vĩ mô kinh tế</li>
+<li>Đảm bảo tuân thủ quy định</li>
+</ul>
+</li>
+<li><strong>Thực Thi Mô Hình:</strong>
+<ul>
+<li>Áp dụng kịch bản cho danh mục</li>
+<li>Tạo Stressed-PD</li>
+<li>Tính toán tác động vốn</li>
+</ul>
+</li>
+</ol>
+<div class="formula-box">
+<strong>Mô Hình Đa Yếu Tố:</strong><br>
+                            ln(PD<sub>căng_thẳng</sub>) = α + β₁×GDP + β₂×Thất_Nghiệp + β₃×Lãi_Suất + ε
+                        </div>
+</div>
+<!-- Results Analysis -->
+<div class="stress-content-item" id="stress-results">
+<h3>📈 Results Analysis</h3>
+<div class="chart-container">
+<canvas id="resultsChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<div class="metric-grid">
+<div class="metric-card">
+<div class="metric-value">150-300%</div>
+<div class="metric-label">PD Increase Range</div>
+</div>
+<div class="metric-card">
+<div class="metric-value">Year 2</div>
+<div class="metric-label">Peak Stress Impact</div>
+</div>
+</div>
+<h4>Key Metrics to Analyze:</h4>
+<ul>
+<li><strong>PD Sensitivity:</strong> How PD responds to different stress levels</li>
+<li><strong>Portfolio Impact:</strong> Aggregate effect on loan portfolios</li>
+<li><strong>Capital Requirements:</strong> Stressed capital ratios and buffers</li>
+<li><strong>Time Profile:</strong> When stress impacts peak and recover</li>
+</ul>
+<div class="formula-box">
+<strong>Capital Impact:</strong><br>
+                            Stressed Capital = (Stressed PD × LGD × EAD × Correlation Factor) / Capital Ratio
+                        </div>
+</div>
+<!-- Model Validation -->
+<div class="stress-content-item" id="stress-validation">
+<h3>✅ Model Validation</h3>
+<div class="chart-container">
+<canvas id="validationChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<h4>Validation Framework:</h4>
+<ul>
+<li><strong>Backtesting:</strong> Compare predictions with actual outcomes</li>
+<li><strong>Benchmarking:</strong> Compare with peer institutions and industry standards</li>
+<li><strong>Sensitivity Analysis:</strong> Test model stability under various assumptions</li>
+<li><strong>Expert Review:</strong> Qualitative assessment by risk experts</li>
+</ul>
+<div class="metric-grid">
+<div class="metric-card">
+<div class="metric-value">Annual</div>
+<div class="metric-label">Validation Frequency</div>
+</div>
+<div class="metric-card">
+<div class="metric-value">3-5 Years</div>
+<div class="metric-label">Backtesting Period</div>
+</div>
+</div>
+<div class="formula-box">
+<strong>Validation Tests:</strong><br>
+                            • Discriminatory Power (AUC, KS Test)<br>
+                            • Calibration (Hosmer-Lemeshow Test)<br>
+                            • Stability (Population Stability Index)
+                        </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Implementation Section -->
+<div class="content-section" id="implementation">
+<h2 class="section-title">🛠️ Hướng Dẫn Triển Khai</h2>
+<div class="chart-container">
+<canvas id="implementationFlowChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+</div>
+<h3>Quy Trình Triển Khai Từng Bước</h3>
+<ol>
+<li><strong>Thu Thập &amp; Chuẩn Bị Dữ Liệu</strong>
+<ul>
+<li>Dữ liệu vỡ nợ lịch sử (tối thiểu 5-7 năm)</li>
+<li>Dữ liệu báo cáo tài chính</li>
+<li>Biến vĩ mô kinh tế</li>
+<li>Thông tin cấp tài khoản</li>
+</ul>
+</li>
+<li><strong>Phát Triển Mô Hình</strong>
+<ul>
+<li>Lựa chọn và chuyển đổi biến</li>
+<li>Mô hình hóa thống kê (Hồi quy logistic, Học máy)</li>
+<li>Xác thực và kiểm tra mô hình</li>
+<li>Hiệu chỉnh và điều chỉnh tinh</li>
+</ul>
+</li>
+<li><strong>Triển Khai &amp; Tích Hợp</strong>
+<ul>
+<li>Tích hợp hệ thống</li>
+<li>Quy trình chấm điểm tự động</li>
+<li>Báo cáo và giám sát</li>
+<li>Quản trị và kiểm soát</li>
+</ul>
+</li>
+</ol>
+</div>
+<script>
+        // Global chart configuration
+        Chart.defaults.responsive = true;
+        Chart.defaults.maintainAspectRatio = false;
+        Chart.defaults.plugins.legend.position = 'top';
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Hide all nav tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Stress PD navigation
+        function showStressContent(contentId) {
+            // Hide all stress content items
+            const items = document.querySelectorAll('.stress-content-item');
+            items.forEach(item => item.classList.remove('active'));
+            
+            // Hide all stress nav items
+            const navItems = document.querySelectorAll('.stress-nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            // Show selected content
+            document.getElementById('stress-' + contentId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Toggle detail function for modeling section
+        function toggleDetail(detailId) {
+            const detail = document.getElementById(detailId);
+            if (detail.style.display === 'none' || detail.style.display === '') {
+                detail.style.display = 'block';
+            } else {
+                detail.style.display = 'none';
+            }
+        }
+
+        // Chart creation functions
+        function createOverviewChart() {
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['T-24', 'T-18', 'T-12', 'T-6', 'Current (T)', 'T+6', 'T+12'],
+                    datasets: [{
+                        label: 'PD (Hướng Tới Tương Lai)',
+                        data: [null, null, null, null, 2.1, 2.5, 2.8],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#667eea',
+                        fill: false,
+                        showLine: true
+                    }, {
+                        label: 'Tỷ Lệ Nợ Xấu (Điểm Lịch Sử)',
+                        data: [1.8, 2.1, 2.4, 2.7, 2.9, null, null],
+                        borderColor: 'transparent',
+                        backgroundColor: '#e74c3c',
+                        pointRadius: 8,
+                        pointBackgroundColor: '#e74c3c',
+                        pointBorderColor: '#c0392b',
+                        pointBorderWidth: 2,
+                        fill: false,
+                        showLine: false,
+                        pointStyle: 'circle'
+                    }, {
+                        label: 'ODR (Hướng Về Quá Khứ)',
+                        data: [2.8, 2.6, 2.4, 2.2, 2.0, null, null],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.2)',
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#f39c12',
+                        fill: false,
+                        showLine: true,
+                        borderDash: [8, 4]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Tỷ Lệ Vỡ Nợ (%)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Các Kỳ Thời Gian (Tháng)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Góc Nhìn Thời Gian: PD (Tương Lai) vs Tỷ Lệ Nợ Xấu (Điểm) vs ODR (Quá Khứ)' },
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    elements: {
+                        line: {
+                            spanGaps: true
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+        function createTTCChart() {
+            const ctx = document.getElementById('ttcChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'PIT PD',
+                        data: [2.1, 2.8, 3.2, 4.1, 4.8, 5.2, 4.9, 4.3, 3.8, 3.2, 2.9, 2.5],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        pointRadius: 4
+                    }, {
+                        label: 'TTC PD',
+                        data: [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0,
+                        pointRadius: 4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'PD (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'So Sánh PIT vs TTC PD' }
+                    }
+                }
+            });
+        }
+
+        function createLifetimeMarginalChart() {
+            const ctx = document.getElementById('lifetimeMarginalChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'PD Lifetime (trọn đời)',
+                        data: [
+                            {x: 0.01, y: 0.01}, {x: 0.02, y: 0.039}, {x: 0.03, y: 0.087}, 
+                            {x: 0.04, y: 0.153}, {x: 0.05, y: 0.236}, {x: 0.06, y: 0.335},
+                            {x: 0.07, y: 0.449}, {x: 0.08, y: 0.577}, {x: 0.09, y: 0.717},
+                            {x: 0.10, y: 0.867}
+                        ],
+                        borderColor: '#3498db',
+                        backgroundColor: '#3498db',
+                        pointRadius: 6,
+                        showLine: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'PD Biên' },
+                            min: 0,
+                            max: 0.1
+                        },
+                        y: {
+                            title: { display: true, text: 'PD Lifetime (trọn đời)' },
+                            min: 0,
+                            max: 1
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Mối Quan Hệ PD Lifetime (trọn đời) vs PD Biên' }
+                    }
+                }
+            });
+        }
+
+        function createHybridChart() {
+            const ctx = document.getElementById('hybridChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'PIT PD',
+                        data: [2.1, 2.8, 3.2, 4.1, 4.8, 5.2, 4.9, 4.3, 3.8, 3.2, 2.9, 2.5],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        borderDash: [5, 5]
+                    }, {
+                        label: 'TTC PD',
+                        data: [3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2, 3.2],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0,
+                        borderDash: [5, 5]
+                    }, {
+                        label: 'Hybrid PD (α=0.6)',
+                        data: [2.54, 2.96, 3.12, 3.66, 4.08, 4.32, 4.14, 3.78, 3.48, 3.12, 2.94, 2.78],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'PD (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Hybrid PD: Combining PIT and TTC Approaches' }
+                    }
+                }
+            });
+        }
+
+        function createCumulativeChart() {
+            const ctx = document.getElementById('cumulativeChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6', 'Year 7'],
+                    datasets: [{
+                        label: 'High Risk Grade',
+                        data: [5.0, 9.75, 14.26, 18.55, 22.62, 26.49, 30.16],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Medium Risk Grade',
+                        data: [2.5, 4.88, 7.16, 9.33, 11.39, 13.35, 15.22],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Low Risk Grade',
+                        data: [0.5, 1.0, 1.49, 1.98, 2.46, 2.94, 3.41],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Cumulative PD (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Cumulative PD Evolution by Risk Grade' }
+                    }
+                }
+            });
+        }
+
+        function createComparisonChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Time Horizon', 'Data Requirements', 'Regulatory Use', 'Update Frequency', 'Severity Level', 'Complexity'],
+                    datasets: [{
+                        label: 'Stress PD',
+                        data: [5, 3, 5, 4, 4, 5],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                        pointBackgroundColor: '#e74c3c',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#e74c3c'
+                    }, {
+                        label: 'Downturn PD',
+                        data: [2, 5, 3, 2, 5, 3],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.2)',
+                        pointBackgroundColor: '#f39c12',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#f39c12'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Stress PD vs Downturn PD Comparison' }
+                    }
+                }
+            });
+        }
+
+        function createDownturnMethodologyChart() {
+            const ctx = document.getElementById('downturnMethodologyChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'],
+                    datasets: [{
+                        label: 'Historical PD Rates',
+                        data: [2.1, 6.8, 5.2, 3.8, 3.1, 2.4, 1.9, 1.8, 2.2, 1.9, 2.1, 1.8, 4.2],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        pointRadius: 4
+                    }, {
+                        label: 'Downturn PD (95th percentile)',
+                        data: [6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8, 6.8],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        borderDash: [10, 5],
+                        tension: 0,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'PD (%)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Year' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Historical PD Evolution & Downturn Calibration' }
+                    }
+                }
+            });
+        }
+
+        function createStressMethodologyChart() {
+            const ctx = document.getElementById('stressMethodologyChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Historical Data',
+                        data: [
+                            {x: -2.1, y: 4.8}, {x: -1.8, y: 4.2}, {x: -1.2, y: 3.8},
+                            {x: -0.8, y: 3.2}, {x: 0.2, y: 2.8}, {x: 0.8, y: 2.3},
+                            {x: 1.2, y: 2.1}, {x: 1.8, y: 1.9}, {x: 2.1, y: 1.7},
+                            {x: 2.8, y: 1.5}, {x: 3.2, y: 1.4}
+                        ],
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: '#667eea'
+                    }, {
+                        label: 'Regression Line',
+                        data: [{x: -3, y: 5.2}, {x: 4, y: 1.2}],
+                        type: 'line',
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { title: { display: true, text: 'GDP Growth (%)' } },
+                        y: { title: { display: true, text: 'Average PD (%)' } }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'PD vs GDP Growth Relationship' }
+                    }
+                }
+            });
+        }
+
+        function createStressScenariosChart() {
+            const ctx = document.getElementById('stressScenariosChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Year 0', 'Year 1', 'Year 2', 'Year 3'],
+                    datasets: [{
+                        label: 'Baseline',
+                        data: [2.1, 2.2, 2.0, 1.9],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Adverse',
+                        data: [2.1, 3.8, 4.2, 3.5],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Severely Adverse',
+                        data: [2.1, 5.8, 6.5, 5.2],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'PD (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Stress Scenario PD Projections' }
+                    }
+                }
+            });
+        }
+
+        function createImplementationChart() {
+            const ctx = document.getElementById('implementationChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Data Preparation', 'Model Development', 'Validation', 'Implementation', 'Monitoring'],
+                    datasets: [{
+                        data: [25, 30, 20, 15, 10],
+                        backgroundColor: [
+                            '#3498db',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#27ae60',
+                            '#9b59b6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: { display: true, text: 'Stress Testing Implementation Effort Distribution' }
+                    }
+                }
+            });
+        }
+
+        function createResultsChart() {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Retail', 'SME', 'Corporate', 'Mortgage', 'Credit Card'],
+                    datasets: [{
+                        label: 'Base Case PD',
+                        data: [3.2, 4.1, 1.8, 0.8, 5.2],
+                        backgroundColor: 'rgba(52, 152, 219, 0.8)'
+                    }, {
+                        label: 'Stressed PD',
+                        data: [7.8, 9.2, 4.5, 2.1, 12.8],
+                        backgroundColor: 'rgba(231, 76, 60, 0.8)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'PD (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Base vs Stressed PD by Portfolio' }
+                    }
+                }
+            });
+        }
+
+        function createValidationChart() {
+            const ctx = document.getElementById('validationChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Discrimination', 'Calibration', 'Stability', 'Economic Intuition', 'Data Quality'],
+                    datasets: [{
+                        label: 'Current Model',
+                        data: [85, 78, 82, 90, 88],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        pointBackgroundColor: '#667eea'
+                    }, {
+                        label: 'Benchmark',
+                        data: [80, 75, 80, 85, 85],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        pointBackgroundColor: '#27ae60'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { stepSize: 20 }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Model Validation Scorecard' }
+                    }
+                }
+            });
+        }
+
+        function createImplementationFlowChart() {
+            const ctx = document.getElementById('implementationFlowChart').getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'Data Collection',
+                        data: [100, 20, 0, 0],
+                        backgroundColor: '#3498db'
+                    }, {
+                        label: 'Model Development',
+                        data: [0, 80, 100, 20],
+                        backgroundColor: '#e74c3c'
+                    }, {
+                        label: 'Validation',
+                        data: [0, 0, 40, 100],
+                        backgroundColor: '#f39c12'
+                    }, {
+                        label: 'Implementation',
+                        data: [0, 0, 0, 80],
+                        backgroundColor: '#27ae60'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Completion (%)' }
+                        }
+                    },
+                    plugins: {
+                        title: { display: true, text: 'Implementation Timeline' }
+                    }
+                }
+            });
+        }
+
+        // Initialize all charts when page loads
+        window.addEventListener('load', function() {
+            createOverviewChart();
+            createTTCChart();
+            createLifetimeMarginalChart();
+            createHybridChart();
+            createCumulativeChart();
+            createComparisonChart();
+            createDownturnMethodologyChart();
+            createStressMethodologyChart();
+            createStressScenariosChart();
+            createImplementationChart();
+            createResultsChart();
+            createValidationChart();
+            createImplementationFlowChart();
+        });
+    </script>
+
+
+</div></body></html>
