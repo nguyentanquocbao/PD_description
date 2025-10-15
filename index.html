@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Hướng Dẫn Phân L Xác Suất Vỡ Nợ (PD)</title>
-<script src="H%C6%B0%E1%BB%9Bng%20D%E1%BA%ABn%20Ph%C3%A2n%20L%20X%C3%A1c%20Su%E1%BA%A5t%20V%E1%BB%A1%20N%E1%BB%A3%20(PD)_files/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
         * {
             margin: 0;
@@ -402,7 +402,7 @@
 
 <!-- Interactive Comparison Chart -->
 <div class="chart-container">
-<canvas id="overviewChart" style="display: block; box-sizing: border-box; height: 300px; width: 1300px;" width="1300" height="300"></canvas>
+<canvas id="overviewChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 
 <!-- Key Applications -->
@@ -438,7 +438,7 @@
                         PD Point-in-Time vs PD Throught-The-Cycle
                     </div>
 <div class="chart-container">
-<canvas id="ttcChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="ttcChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="formula-box">
                         PIT PD = f(Điều Kiện Kinh Tế Hiện Tại)
@@ -475,7 +475,7 @@
                         PD Lifetime (trọn đời) vs PD Marginal
                     </div>
 <div class="chart-container">
-<canvas id="lifetimeMarginalChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="lifetimeMarginalChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="formula-box">
                         PD Biên<sub>t</sub> = PD trong năm t | Tồn tại đến t-1
@@ -512,7 +512,7 @@
                         PD Hybrid
                     </div>
 <div class="chart-container">
-<canvas id="hybridChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="hybridChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="formula-box">
                         PD Hybrid = α × PIT PD + (1-α) × TTC PD
@@ -534,7 +534,7 @@
                         PD Cummulative (tích luỹ)
                     </div>
 <div class="chart-container">
-<canvas id="cumulativeChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="cumulativeChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="formula-box">
                         PD Cummulative<sub>T</sub> = 1 - ∏<sub>t=1</sub><sup>T</sup>(1 - PD<sub>t</sub>)
@@ -735,7 +735,7 @@
 <div class="stress-content-item active" id="stress-comparison">
 <h3>🔍 Stressed-PD vs Down-Turn PD: Sự Khác Biệt Chính</h3>
 <div class="chart-container">
-<canvas id="comparisonChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="comparisonChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 
 <table class="comparison-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
@@ -800,7 +800,7 @@
 <div class="stress-content-item" id="stress-stress-methodology">
 <h3>⚠️ Phương Pháp Luận Stressed-PD</h3>
 <div class="chart-container">
-<canvas id="stressMethodologyChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="stressMethodologyChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 
 <div class="alert" style="background-color: #fff3cd; border-color: #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin: 15px 0;">
@@ -837,7 +837,7 @@ ngân hàng đánh giá khả năng phục hồi danh mục dưới các điều
 <div class="stress-content-item" id="stress-downturn-methodology">
 <h3>📉 Phương Pháp Luận Down-Turn PD</h3>
 <div class="chart-container">
-<canvas id="downturnMethodologyChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="downturnMethodologyChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 
 <div class="alert" style="background-color: #fff3cd; border-color: #ffeaa7; color: #856404; padding: 15px; border-radius: 8px; margin: 15px 0;">
@@ -927,7 +927,7 @@ vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướ
 <div class="stress-content-item" id="stress-scenarios">
 <h3>🎭 Kịch Bản Căng Thẳng</h3>
 <div class="chart-container">
-<canvas id="stressScenariosChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="stressScenariosChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="metric-grid">
 <div class="metric-card">
@@ -958,7 +958,7 @@ vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướ
 <div class="stress-content-item" id="stress-implementation">
 <h3>⚙️ Khung Triển Khai</h3>
 <div class="chart-container">
-<canvas id="implementationChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="implementationChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <h4>Các Bước Triển Khai:</h4>
 <ol>
@@ -993,7 +993,7 @@ vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướ
 <div class="stress-content-item" id="stress-results">
 <h3>📈 Results Analysis</h3>
 <div class="chart-container">
-<canvas id="resultsChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="resultsChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <div class="metric-grid">
 <div class="metric-card">
@@ -1021,7 +1021,7 @@ vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướ
 <div class="stress-content-item" id="stress-validation">
 <h3>✅ Model Validation</h3>
 <div class="chart-container">
-<canvas id="validationChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="validationChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <h4>Validation Framework:</h4>
 <ul>
@@ -1054,7 +1054,7 @@ vỡ nợ trong các điều kiện kinh tế bất lợi, phản ánh xu hướ
 <div class="content-section" id="implementation">
 <h2 class="section-title">🛠️ Hướng Dẫn Triển Khai</h2>
 <div class="chart-container">
-<canvas id="implementationFlowChart" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" height="0" width="0"></canvas>
+<canvas id="implementationFlowChart" style="display: block; box-sizing: border-box; height: 300px; width: 100%;" height="300"></canvas>
 </div>
 <h3>Quy Trình Triển Khai Từng Bước</h3>
 <ol>
